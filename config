@@ -15,10 +15,12 @@ font pango:monospace 8
 
 # This font is widely installed, provides lots of unicode glyphs, right-to-left
 # text rendering and scalability on retina/hidpi displays (thanks to pango).
-font pango:DejaVu Sans Mono 8
+#font pango:DejaVu Sans Mono 8
 
-#picom, my compositor
-exec --no-startup-id "picom --config $HOME/.config/picom/picom.conf"
+# Start XDG autostart .desktop files using dex. See also
+# https://wiki.archlinux.org/index.php/XDG_Autostart
+exec --no-startup-id dex --autostart --environment i3
+
 # The combination of xss-lock, nm-applet and pactl is a popular choice, so
 # they are included here as an example. Modify as you see fit.
 
@@ -39,7 +41,7 @@ bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOU
 
 # use these keys for focus, movement, and resize directions when reaching for
 # the arrows is not convenient
-set $up k
+set $up k 
 set $down j
 set $left h
 set $right l
@@ -48,17 +50,18 @@ set $right l
 floating_modifier Mod1
 
 # start a terminal
-bindsym Mod1+Return exec konsole
+bindsym Mod1+Return exec i3-sensible-terminal
 
 # kill focused window
 bindsym Mod1+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym Mod1+space exec dmenu_run
-# There also is the (new) i3-dmenu-desktop which only displays applications
-# shipping a .desktop file. It is a wrapper around dmenu, so you need that
-# installed.
-# bindsym Mod1+d exec --no-startup-id i3-dmenu-desktop
+#bindsym Mod1+d exec --no-startup-id dmenu_run
+# A more modern dmenu replacement is rofi:
+# bindsym Mod1+d exec "rofi -modi drun,run -show drun"
+# There also is i3-dmenu-desktop which only displays applications shipping a
+# .desktop file. It is a wrapper around dmenu, so you need that installed.
+ bindsym Mod1+d exec --no-startup-id i3-dmenu-desktop
 
 # change focus
 bindsym Mod1+$left focus left
@@ -85,10 +88,10 @@ bindsym Mod1+Shift+Up move up
 bindsym Mod1+Shift+Right move right
 
 # split in horizontal orientation
-bindsym Mod1+b split h
+#bindsym Mod1+h split h
 
 # split in vertical orientation
-bindsym Mod1+n split n
+bindsym Mod1+v split v
 
 # enter fullscreen mode for the focused container
 bindsym Mod1+f fullscreen toggle
@@ -102,7 +105,7 @@ bindsym Mod1+e layout toggle split
 bindsym Mod1+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym Mod1+m focus mode_toggle
+bindsym Mod1+space focus mode_toggle
 
 # focus the parent container
 bindsym Mod1+a focus parent
@@ -124,6 +127,11 @@ set $ws2 "2"
 set $ws3 "3"
 set $ws4 "4"
 set $ws5 "5"
+set $ws6 "6"
+set $ws7 "7"
+set $ws8 "8"
+set $ws9 "9"
+set $ws10 "10"
 
 # switch to workspace
 bindsym Mod1+1 workspace number $ws1
@@ -131,6 +139,11 @@ bindsym Mod1+2 workspace number $ws2
 bindsym Mod1+3 workspace number $ws3
 bindsym Mod1+4 workspace number $ws4
 bindsym Mod1+5 workspace number $ws5
+bindsym Mod1+6 workspace number $ws6
+bindsym Mod1+7 workspace number $ws7
+bindsym Mod1+8 workspace number $ws8
+bindsym Mod1+9 workspace number $ws9
+bindsym Mod1+0 workspace number $ws10
 
 # move focused container to workspace
 bindsym Mod1+Shift+1 move container to workspace number $ws1
@@ -138,6 +151,11 @@ bindsym Mod1+Shift+2 move container to workspace number $ws2
 bindsym Mod1+Shift+3 move container to workspace number $ws3
 bindsym Mod1+Shift+4 move container to workspace number $ws4
 bindsym Mod1+Shift+5 move container to workspace number $ws5
+bindsym Mod1+Shift+6 move container to workspace number $ws6
+bindsym Mod1+Shift+7 move container to workspace number $ws7
+bindsym Mod1+Shift+8 move container to workspace number $ws8
+bindsym Mod1+Shift+9 move container to workspace number $ws9
+bindsym Mod1+Shift+0 move container to workspace number $ws10
 
 # reload the configuration file
 bindsym Mod1+Shift+c reload
@@ -173,23 +191,15 @@ mode "resize" {
 
 bindsym Mod1+r mode "resize"
 
-# my mods
-# keybindings
-bindsym XF86MonBrightnessUp exec sh ~/.config/i3/backlight.sh -inc 20
-bindsym XF86MonBrightnessDown exec sh ~/.config/i3/backlight.sh -dec 20
-bindsym Mod1+z exec firefox 
-bindsym Mod1+x exec firefox mail.google.com 
-bindsym Mod1+c exec firefox web.whatsapp.com
-bindsym Mod1+v exec onlyoffice-desktopeditors
-bindsym Mod1+q exec telegram-desktop
+for_window [class=".*"] border pixel 2
 
-# apps
-exec setxkbmap it
-exec nitrogen --restore
-exec_always --no-startup-id $HOME/.config/polybar/launch.sh
+#gaps configuration (exclusive to i3-gaps)
+gaps inner 15
 
-#UI
-default_border pixel 4
-default_floating_border pixel 4
-gaps inner 10 
-gaps outer 10
+#startup applications and other stuffs
+exec_always --no-startup-id xrandr --output HDMI1 --primary --mode 1920x1080 --refresh 120 --output eDP1 --mode 1920x1080 --refresh 60 --right-of HDMI1
+
+#exec_always polybar example
+exec --no-startup-id nitrogen --restore
+exec_always --no-startup-id ~/.config/polybar/launch.sh
+exec --no-startup-id picom
